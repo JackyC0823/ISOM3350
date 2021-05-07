@@ -1,0 +1,48 @@
+
+pragma solidity 0.8.4;
+
+contract ICO {  //admin modify/assign/delete token 
+    uint public max_token = 100000 ; 
+    // expect the token should always be enough to receive adopter application
+    uint public total_token_given = 0;
+    mapping (address => uint) equity_tokens;
+    
+    function equity_in_tokens (address adopter) view public returns (uint){
+        return equity_tokens[adopter]; 
+
+//check if the adopter have token (0 or >0)
+contract Assign_token{
+    mapping(uint => adopter) public adopterStructs;
+    address adopter
+    uint id=1;
+    uint public recordCount=0;
+    
+    struct Adopter{
+        string Name;
+        string Age;
+        string HousingType;
+        bool isVolunteer;
+        bool attendCourse;
+        int petAloneHours; 
+        int houseAreaperCapita
+        bool havemaid
+        int householdIncome;
+        bool WalkDogEveryday; 
+        bool desex;
+        bool catNet;
+        int PostMeetRating;
+    }
+    constructor(){
+        adopter = msg.sender;
+    }
+    function cal_token_assign(
+        string memory  )
+        
+        
+        
+        
+        
+        
+        
+        
+}
