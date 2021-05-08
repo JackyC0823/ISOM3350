@@ -168,10 +168,10 @@ contract adoptAnimal {
 	}
 	
 	function apply_adoption(uint animalID) public {
-	    require(tokens[msg.sender] > 0, 'You do not have any token to apply for the adoption.');
+	    require(tokens[msg.sender] > 0 && tokens[msg.sender] >= animals[animalID].token_requirement, 'You do not have any token to apply for the adoption.');
 	    require(adoptions[animalID].isInitialized, 'The animal id does not exist or the animal is not open for adoption.');
 	    require(block.timestamp < adoptions[animalID].endTime, 'The adoption for this animal id is ended.');
-	    adoptions[animalID].candidates.push(msg.sender);
+        adoptions[animalID].candidates.push(msg.sender);
 	}
 	
 	
