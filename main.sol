@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 contract adoptAnimal {
     
@@ -35,7 +36,7 @@ contract adoptAnimal {
     
     
     modifier onlyAdmin(){
-        require(msg.sender == admin, 'You are not an admin.');
+        require(msg.sender == admin, 'You are not the admin.');
         _;
     }
     
@@ -54,18 +55,20 @@ contract adoptAnimal {
 	    tokens_assigned += amount;
 	}
 	
+    //return bidded token to the organization and clear the winner token
 	function clear_token(address adopter) public onlyAdmin{
-	    tokens[adopter] = 0;
+	    tokens_assigned -= tokens[adopter];
+        tokens[adopter] = 0;
 	}
 	
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	
-	//This function checks the adoption avilabilty of each animal
+	//This function checks the adoption availability of each animal
     function isAvailable(uint _id) 
                         view public
-                        returns (bool isIndeed){
+                        returns (bool Availability){
         return animals[_id].isAvailable;                         
     }    
     
@@ -146,7 +149,7 @@ contract adoptAnimal {
     function removeAnimal(uint _id) 
                         public  onlyAdmin
                         returns(bool success){
-        if(!isAvailable(_id)) revert();
+        if(!isAvailable(_id)) revert("This animal has been adopted and no longer available");
         animals[_id].isAvailable = false ;
         return true;
        
@@ -171,6 +174,7 @@ contract adoptAnimal {
 	    adoptions[animalID].candidates.push(msg.sender);
 	}
 	
+	
 	function close_adoption(uint animalID) public onlyAdmin returns (address) {
 	    require(!adoptions[animalID].isEnded, 'The adoption for this animal id is not closed yet.');
 	    require(block.timestamp > adoptions[animalID].endTime, 'The adoption for this animal id is not closed yet.');
@@ -188,13 +192,24 @@ contract adoptAnimal {
 	    }
 	    
 	    clear_token(highest_candidate);
+	    animals[id].isAvailable = false;//once the adoption is closed, set the animal status to be unavailable
 	    return highest_candidate;
 	}
 	
-	function get_adoption_candidates(uint animalID) public returns (address[] memory, uint[] memory){
+	
+	//This function allow adopters to view other candiates and their tokens balance
+	function get_adoption_candidates(uint animalID) public view returns (address[] memory, uint[] memory){
 	    require(adoptions[animalID].isInitialized, 'The animal id does not exist or the animal is not open for adoption.');
-	    // not yet finish
-	    // this should return an array of candidates as well as their token balance
+	    require(block.timestamp < adoptions[animalID].endTime, 'The adoption for this animal id is ended.');
+        address[] memory candidates = new address[](adoptions[animalID].candidates.length);
+        uint[] memory token = new uint[](adoptions[animalID].candidates.length);
+
+        for (uint i = 0; i < candidates.length; i++){
+            candidates[i] = adoptions[animalID].candidates[i];
+            token[i] = tokens[candidates[i]];
+        }
+        return (candidates, token);// an array of candidates as well as their token balance
+        
 	}
 	
 }
