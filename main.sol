@@ -20,6 +20,7 @@ contract adoptAnimal {
         bool isInitialized;
         bool isEnded;
         address[] candidates;
+        address winner;
     }
     
     address admin;
@@ -45,12 +46,8 @@ contract adoptAnimal {
         max_tokens = _max_tokens;
     }
     
-    function view_tokens(address adopter) view public returns (uint) {
-	 	return tokens[adopter];
-	}
-	
 	function add_tokens(address adopter, uint amount) public onlyAdmin{
-	    require(tokens_assigned + amount <= max_tokens, 'Token supply is not enough. Please try some less amount.');
+	    require((tokens_assigned + amount) <= max_tokens, 'Token supply is not enough. Please try some less amount.');
 	    tokens[adopter] += amount;
 	    tokens_assigned += amount;
 	}
@@ -86,10 +83,10 @@ contract adoptAnimal {
         //for simplicity, we assume only Dog and Cat are avilable for adoption
         if (bytes(Species).length == bytes("Dog").length){
             _token_requirement += 9;
-            if (weight < 120){
+            if (weight < 12000){
                 _token_requirement -= 1;
             }
-            else if (weight > 250){
+            else if (weight > 25000){
                 _token_requirement += 1;
             }
         }
@@ -167,15 +164,16 @@ contract adoptAnimal {
         adoptions[animalID].isEnded = false;
 	}
 	
+	//add one month only can apply one animal
 	function apply_adoption(uint animalID) public {
-	    require(tokens[msg.sender] > 0 && tokens[msg.sender] >= animals[animalID].token_requirement, 'You do not have any token to apply for the adoption.');
+	    require(tokens[msg.sender] > 0 && tokens[msg.sender] >= animals[animalID].token_requirement, 'You do not have enough token to apply for the adoption.');
 	    require(adoptions[animalID].isInitialized, 'The animal id does not exist or the animal is not open for adoption.');
 	    require(block.timestamp < adoptions[animalID].endTime, 'The adoption for this animal id is ended.');
         adoptions[animalID].candidates.push(msg.sender);
 	}
 	
 	
-	function close_adoption(uint animalID) public onlyAdmin returns (address) {
+	function end_adoption(uint animalID) public onlyAdmin returns (address) {
 	    require(!adoptions[animalID].isEnded, 'The adoption for this animal id is not closed yet.');
 	    require(block.timestamp > adoptions[animalID].endTime, 'The adoption for this animal id is not closed yet.');
 	    adoptions[animalID].isEnded = true;
@@ -191,9 +189,17 @@ contract adoptAnimal {
 	        }
 	    }
 	    
+	    adoptions[animalID].winner = highest_candidate;
 	    clear_token(highest_candidate);
-	    animals[id].isAvailable = false;//once the adoption is closed, set the animal status to be unavailable
+	    animals[animalID].isAvailable = false;//once the adoption is closed, set the animal status to be unavailable
 	    return highest_candidate;
+	}
+	
+	
+	//allow other adopters to check who win the bid
+	function check_animal_adopter(uint _animalID) public view returns (uint animalID, address adopter) {
+	    require(adoptions[_animalID].isEnded == true, "The animal has not been adopted by any adopters");
+	    return (_animalID, adoptions[animalID].winner);
 	}
 	
 	
