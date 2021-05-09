@@ -77,11 +77,11 @@ contract adoptAnimal {
                         uint age_month,
                         uint weight
                         )internal pure
-                        returns (uint MinimumTokenRequired){
+                        returns (uint    MinimumTokenRequired){
         uint _token_requirement = 0;
         //check the species of animal and assign basic token needed for adoption
         //for simplicity, we assume only Dog and Cat are avilable for adoption
-        if (bytes(Species).length == bytes("Dog").length){
+        if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
             _token_requirement += 9;
             if (weight < 12000){
                 _token_requirement -= 1;
@@ -90,7 +90,7 @@ contract adoptAnimal {
                 _token_requirement += 1;
             }
         }
-        else if (bytes(Species).length == bytes("Cat").length){
+        else if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
             _token_requirement += 8;
         }
         //check the age of animal and assign relevant token needed for adoption
@@ -104,10 +104,10 @@ contract adoptAnimal {
             _token_requirement -= 1;
         }
         //check the level of speical care required for animal, only Medium/High required more tokens
-        if (bytes(SpecialCare).length == bytes("Medium").length){
+        if (keccak256(bytes(SpecialCare)) == keccak256(bytes("Medium"))){
             _token_requirement += 2;
         }
-        else if (bytes(SpecialCare).length == bytes("High").length){
+        else if (keccak256(bytes(SpecialCare)) == keccak256(bytes("High"))){
             _token_requirement += 3;
         }
         //return total token needed for speific animal
@@ -128,15 +128,18 @@ contract adoptAnimal {
                         public onlyAdmin 
                         returns(bool success) {
         if(isAvailable(id)) revert();
-        animals[id].Name = Name;
-        animals[id].Species = Species;
-        animals[id].Breed = Breed;
-        animals[id].SpecialCare = SpecialCare;
-        animals[id].age_year = age_year;
-        animals[id].age_month = age_month;
-        animals[id].token_requirement = CalcTokenRequired(Species,SpecialCare,age_year,age_month,weight);
-        animals[id].weight = weight;
-        animals[id].isAvailable = true ;
+        animals[id] = Animal_Info({
+            Name : Name,
+            Species : Species,
+            Breed : Breed,
+            SpecialCare : SpecialCare,
+            age_year : age_year,
+            age_month : age_month,
+            weight : weight,
+            token_requirement : CalcTokenRequired(Species,SpecialCare,age_year,age_month,weight),
+            isAvailable : true
+        });
+        
         id += 1;
         recordCount += 1;
         return true;
