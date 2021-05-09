@@ -17,11 +17,26 @@ contract adoptAnimal {
     
     struct Adoption_Info {
         uint endTime;
+	string Name
+	uint Age
+	string Housing_type
+	bool Cat_net
+	bool Is_volunteer
+	bool Have_maid
+	bool Taken_course
+	bool Walk_dog_daily
+	uint Pet_daily_alonehr
+	uint Living_spacepa
+	uint Household_income
+	bool willDesex
+	uint Meeting_rating
         bool isInitialized;
         bool isEnded;
         address[] candidates;
         address winner;
     }
+    
+
     
     address admin;
     
