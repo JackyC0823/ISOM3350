@@ -17,19 +17,19 @@ contract adoptAnimal {
     
     struct Adoption_Info {
         uint endTime;
-	string Name
-	uint Age
-	string Housing_type
-	bool Cat_net
-	bool Is_volunteer
-	bool Have_maid
-	bool Taken_course
-	bool Walk_dog_daily
-	uint Pet_daily_alonehr
-	uint Living_spacepa
-	uint Household_income
-	bool willDesex
-	uint Meeting_rating
+	string Name;
+	uint Age;
+	string Housing_type;
+	bool Cat_net;
+	bool Is_volunteer;
+	bool Have_maid;
+	bool Taken_course;
+	bool Walk_dog_daily;
+	uint Pet_daily_alonehr;
+	uint Living_spacepa;
+	uint Household_income;
+	bool willDesex;
+	uint Meeting_rating;
         bool isInitialized;
         bool isEnded;
         address[] candidates;
@@ -66,7 +66,7 @@ contract adoptAnimal {
 	    tokens[adopter] += amount;
 	    tokens_assigned += amount;
 	}
-	
+
     //return bidded token to the organization and clear the winner token
 	function clear_token(address adopter) public onlyAdmin{
 	    tokens_assigned -= tokens[adopter];
@@ -76,6 +76,105 @@ contract adoptAnimal {
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
+	
+	/////// Add by Ally, cannot fix T.T ///////
+	
+	//This function checks the availability adopter
+    function isAvailable(uint _id) 
+                        view public
+                        returns (bool Availability){
+        return adopter[_id].isAvailable;                         
+    }    
+    
+    //This function calculate the token assigned to an adopter
+    function AssignToken(
+                        uint Age,
+			string Housing_type,
+			bool Cat_net,
+			bool Is_volunteer,
+			bool Have_maid,
+			bool Taken_course,
+			bool Walk_dog_daily,
+			uint Pet_daily_alonehr,
+			uint Living_spacepa,
+			uint Household_income,
+			bool willDesex,
+			uint Meeting_rating,
+                        )internal pure
+                        returns (uint  tokens[adopter]){
+        uint tokens[adopter] = 0;
+       
+        if (Age < 18){
+	tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
+	    }
+        if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
+            if (bool Cat_net = false){
+                tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
+            }
+            else if (bool Cat_net = false){
+                tokens[adopter] += 1;
+            }
+        }
+	if (Housing_type = Public Housing){
+		tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
+        }	
+	else if (Housing_type = Chinese Walk Up){
+		tokens[adopter] += 0;
+	}
+	else if (Housing_type = Private Housing){
+		tokens[adopter] += 1;
+	}
+	else if (Housing_type = Village House){
+		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+	else if (Housing_type = Villa){
+		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+	else if (Housing_type = Independent Block){
+		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+        if (bool Is_volunteer = True){
+		tokens[adopter] += 1;
+	}
+	
+        if (bool Taken_course = True){
+		tokens[adopter] += 2;
+	}
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+		if (bool Have_maid = True)
+		tokens[adopter] += 2;
+	}
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+		if (bool Walk_dog_daily = True)
+		tokens[adopter] += 2;
+	}
+	if (Pet_daily_alonehr <6){
+            tokens[adopter] += 2;
+	}
+	else if (Pet_daily_alonehr <9){
+            tokens[adopter] += 2;
+	}
+	if (bool willDesex = True){
+            tokens[adopter] += 2;
+	}
+	
+	
+	
 	
 	//This function checks the adoption availability of each animal
     function isAvailable(uint _id) 
