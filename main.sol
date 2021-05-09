@@ -172,8 +172,12 @@ contract adoptAnimal {
 	if (bool willDesex = True){
             tokens[adopter] += 2;
 	}
-	
-	
+	if (Living_spacepa > 200){
+	    tokens[adopter] += 1;
+	}
+	else if (Living_spacepa > 300){
+	    tokens[adopter] += 2;
+	}
 	
 	
 	//This function checks the adoption availability of each animal
