@@ -293,7 +293,7 @@ contract adoptAnimal {
         adoptions[animalID].candidates.push(msg.sender);
 	}
 	
-	
+	//End the auction after bidding time
 	function end_adoption(uint animalID) public onlyAdmin returns (address) {
 	    require(!adoptions[animalID].isEnded, 'The adoption for this animal id is not closed yet.');
 	    require(block.timestamp > adoptions[animalID].endTime, 'The adoption for this animal id is not closed yet.');
