@@ -76,8 +76,7 @@ contract adoptAnimal {
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
-	
-	/////// Add by Ally, cannot fix T.T ///////
+		/////// Add by Ally, cannot fix T.T ///////
 	
 	//This function checks the availability adopter
     function isAvailable(uint _id) 
@@ -88,35 +87,33 @@ contract adoptAnimal {
     
     //This function calculate the token assigned to an adopter
     function AssignToken(
-                        uint Age,
+            uint Age,
+			bool Cat_net,            
 			string Housing_type,
-			bool Cat_net,
 			bool Is_volunteer,
+			bool Taken_course,			
 			bool Have_maid,
-			bool Taken_course,
 			bool Walk_dog_daily,
 			uint Pet_daily_alonehr,
-			uint Living_spacepa,
-			uint Household_income,
 			bool willDesex,
+			uint Living_spacepa,
+			uint Household_income,	
 			uint Meeting_rating,
+			
                         )internal pure
                         returns (uint  tokens[adopter]){
         uint tokens[adopter] = 0;
        
-        if (Age < 18){
-	tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
-	    }
-        if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
-            if (bool Cat_net = false){
-                tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
+        require(Age>=18, “Adopter’s must be above or equal to 18.”)                 // Ensure adopter is above 18
+        if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){                  // Ensure adopter install a cat net, if adopter wants to adopt a cat
+                require(bool Cat_net = True, “Adopter must install a cat net.”)
             }
             else if (bool Cat_net = false){
                 tokens[adopter] += 1;
             }
         }
-	if (Housing_type = Public Housing){
-		tokens[adopter] -= 100;  // Ally: I dont know how to make it a complete ban T.T
+	if (Housing_type = Public Housing){                                            // Assign tokens according to adopter's housing type
+		tokens[adopter] -= 100;  
         }	
 	else if (Housing_type = Chinese Walk Up){
 		tokens[adopter] += 0;
@@ -148,37 +145,45 @@ contract adoptAnimal {
 			tokens[adopter] += 2;
 		}
 	}
-        if (bool Is_volunteer = True){
+        if (bool Is_volunteer = True){                                              // Assign tokens according to if the adopter is a volunteer
 		tokens[adopter] += 1;
 	}
 	
-        if (bool Taken_course = True){
+        if (bool Taken_course = True){                                              // Assign tokens according to if the adopter has taken related course
 		tokens[adopter] += 2;
 	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has maid, if adopter wants to adopt a dog
 		if (bool Have_maid = True)
 		tokens[adopter] += 2;
 	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has taken related course
 		if (bool Walk_dog_daily = True)
 		tokens[adopter] += 2;
 	}
-	if (Pet_daily_alonehr <6){
+	if (Pet_daily_alonehr <6){                                                      // Assign tokens according to expected alone hour at home of the pet
             tokens[adopter] += 2;
 	}
 	else if (Pet_daily_alonehr <9){
             tokens[adopter] += 2;
 	}
-	if (bool willDesex = True){
+	if (bool willDesex = True){                                                     // Assign tokens according to if the adopter will let the pet receive Desex surgery
             tokens[adopter] += 2;
 	}
-	if (Living_spacepa > 200){
+	if (Living_spacepa > 200){                                                      // Assign tokens according to adopter's living space per capita
 	    tokens[adopter] += 1;
 	}
 	else if (Living_spacepa > 300){
 	    tokens[adopter] += 2;
 	}
+	require(household_income > 10000, "Household income per capital must be above HKD10000" )
+	if (Household_income > 15000){
+	    token[adopter] += 1                                                         // Assign tokens according to adopter's household income per capita
+	}
+	else if (Household_income > 35000){
+	    token[adopter] += 2
+	}
 	
+	token[adopter] = token[adopter] + Meeting_rating                                // Adjust the number of tokens according to the meeting rating, range is -5 to +5
 	
 	//This function checks the adoption availability of each animal
     function isAvailable(uint _id) 
