@@ -17,25 +17,29 @@ contract adoptAnimal {
     
     struct Adoption_Info {
         uint endTime;
-	string Name;
-	uint Age;
-	string Housing_type;
-	bool Cat_net;
-	bool Is_volunteer;
-	bool Have_maid;
-	bool Taken_course;
-	bool Walk_dog_daily;
-	uint Pet_daily_alonehr;
-	uint Living_spacepa;
-	uint Household_income;
-	bool willDesex;
-	uint Meeting_rating;
         bool isInitialized;
         bool isEnded;
         address[] candidates;
         address winner;
     }
     
+    struct Adopter_Info {
+        string Name;
+    	uint Age;
+        string Housing_type;
+    	bool Cat_net;
+    	bool Is_volunteer;
+    	bool Have_maid;
+    	bool Taken_course;
+    	bool Walk_dog_daily;
+    	uint Pet_daily_alonehr;
+    	uint Living_spacepa;
+    	uint Household_income;
+    	bool willDesex;
+    	uint Meeting_rating;
+    	bool isValid;
+        
+    }
 
     
     address admin;
@@ -49,6 +53,7 @@ contract adoptAnimal {
     mapping(address => uint) public tokens;
     mapping(uint  => Animal_Info) public animals;
     mapping(uint => Adoption_Info) public adoptions;
+    mapping(address => Adopter_Info) public adopter;
     
     
     modifier onlyAdmin(){
@@ -79,14 +84,14 @@ contract adoptAnimal {
 		/////// Add by Ally, cannot fix T.T ///////
 	
 	//This function checks the availability adopter
-    function isAvailable(uint _id) 
-                        view public
-                        returns (bool Availability){
-        return adopter[_id].isAvailable;                         
-    }    
-    
+  
+    function ApproveAdopter(address _adopter)
+                        public onlyAdmin{
+        adopter[_adopter].isValid = true;
+    }
+    //submit adopter info -> staff validate 
     //This function calculate the token assigned to an adopter
-    function AssignToken(
+    function ApplyAdopter(
             uint Age,
 			bool Cat_net,            
 			string Housing_type,
@@ -98,92 +103,13 @@ contract adoptAnimal {
 			bool willDesex,
 			uint Living_spacepa,
 			uint Household_income,	
-			uint Meeting_rating,
+			uint Meeting_rating
 			
-                        )internal pure
-                        returns (uint  tokens[adopter]){
-        uint tokens[adopter] = 0;
-       
-        require(Age>=18, “Adopter’s must be above or equal to 18.”)                 // Ensure adopter is above 18
-        if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){                  // Ensure adopter install a cat net, if adopter wants to adopt a cat
-                require(bool Cat_net = True, “Adopter must install a cat net.”)
-            }
-            else if (bool Cat_net = false){
-                tokens[adopter] += 1;
-            }
-        }
-	if (Housing_type = Public Housing){                                            // Assign tokens according to adopter's housing type
-		tokens[adopter] -= 100;  
-        }	
-	else if (Housing_type = Chinese Walk Up){
-		tokens[adopter] += 0;
-	}
-	else if (Housing_type = Private Housing){
-		tokens[adopter] += 1;
-	}
-	else if (Housing_type = Village House){
-		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-	else if (Housing_type = Villa){
-		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-	else if (Housing_type = Independent Block){
-		if (keccak256(bytes(Species)) == keccak256(bytes("cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-        if (bool Is_volunteer = True){                                              // Assign tokens according to if the adopter is a volunteer
-		tokens[adopter] += 1;
-	}
-	
-        if (bool Taken_course = True){                                              // Assign tokens according to if the adopter has taken related course
-		tokens[adopter] += 2;
-	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has maid, if adopter wants to adopt a dog
-		if (bool Have_maid = True)
-		tokens[adopter] += 2;
-	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has taken related course
-		if (bool Walk_dog_daily = True)
-		tokens[adopter] += 2;
-	}
-	if (Pet_daily_alonehr <6){                                                      // Assign tokens according to expected alone hour at home of the pet
-            tokens[adopter] += 2;
-	}
-	else if (Pet_daily_alonehr <9){
-            tokens[adopter] += 2;
-	}
-	if (bool willDesex = True){                                                     // Assign tokens according to if the adopter will let the pet receive Desex surgery
-            tokens[adopter] += 2;
-	}
-	if (Living_spacepa > 200){                                                      // Assign tokens according to adopter's living space per capita
-	    tokens[adopter] += 1;
-	}
-	else if (Living_spacepa > 300){
-	    tokens[adopter] += 2;
-	}
-	require(household_income > 10000, "Household income per capital must be above HKD10000" )
-	if (Household_income > 15000){
-	    token[adopter] += 1                                                         // Assign tokens according to adopter's household income per capita
-	}
-	else if (Household_income > 35000){
-	    token[adopter] += 2
-	}
-	
-	token[adopter] = token[adopter] + Meeting_rating                                // Adjust the number of tokens according to the meeting rating, range is -5 to +5
+                        )public 
+                        returns (bool success){
+            
+            
+    }
 	
 	//This function checks the adoption availability of each animal
     function isAvailable(uint _id) 
@@ -277,6 +203,93 @@ contract adoptAnimal {
         return true;
        
     }
+    
+    function assignToken(address _adopter)
+                        internal pure{
+                uint _tokens = 0;
+       
+        require(Age>=18, 'Adopter must be above or equal to 18.');                  // Ensure adopter is above 18
+        if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){                  // Ensure adopter install a cat net, if adopter wants to adopt a cat
+                require(bool Cat_net = True, 'Adopter must install a cat net.');
+            }
+            else if (bool Cat_net = false){
+                tokens[adopter] += 1;
+            }
+        }
+	if (Housing_type = Public Housing){                                            // Assign tokens according to adopter's housing type
+		tokens[adopter] -= 100;  
+        }	
+	else if (Housing_type = Chinese Walk Up){
+		tokens[adopter] += 0;
+	}
+	else if (Housing_type = Private Housing){
+		tokens[adopter] += 1;
+	}
+	else if (Housing_type = Village House){
+		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+	else if (Housing_type = Villa){
+		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+	else if (Housing_type = Independent Block){
+		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
+			tokens[adopter] += 1;
+		}
+		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
+			tokens[adopter] += 2;
+		}
+	}
+        if (bool Is_volunteer = True){                                              // Assign tokens according to if the adopter is a volunteer
+		tokens[adopter] += 1;
+	}
+	
+        if (bool Taken_course = True){                                              // Assign tokens according to if the adopter has taken related course
+		tokens[adopter] += 2;
+	}
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has maid, if adopter wants to adopt a dog
+		if (bool Have_maid = True)
+		tokens[adopter] += 2;
+	}
+	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has taken related course
+		if (bool Walk_dog_daily = True)
+		tokens[adopter] += 2;
+	}
+	if (Pet_daily_alonehr <6){                                                      // Assign tokens according to expected alone hour at home of the pet
+            tokens[adopter] += 2;
+	}
+	else if (Pet_daily_alonehr <9){
+            tokens[adopter] += 2;
+	}
+	if (bool willDesex = True){                                                     // Assign tokens according to if the adopter will let the pet receive Desex surgery
+            tokens[adopter] += 2;
+	}
+	if (Living_spacepa > 200){                                                      // Assign tokens according to adopter's living space per capita
+	    tokens[adopter] += 1;
+	}
+	else if (Living_spacepa > 300){
+	    tokens[adopter] += 2;
+	}
+	require(household_income > 10000, "Household income per capital must be above HKD10000" )
+	if (Household_income > 15000){
+	    token[adopter] += 1                                                         // Assign tokens according to adopter's household income per capita
+	}
+	else if (Household_income > 35000){
+	    token[adopter] += 2
+	}                        
+    token[adopter] = token[adopter] + Meeting_rating                                // Adjust the number of tokens according to the meeting rating, range is -5 to +5
+	
+    
+}
 	
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
@@ -344,4 +357,4 @@ contract adoptAnimal {
         
 	}
 	
-}
+
