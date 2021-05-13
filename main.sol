@@ -29,7 +29,7 @@ contract adoptAnimal {
     uint public max_tokens; //The maximum tokens available, will be specified in the constructor of the deployment of the contract
     uint public tokens_assigned; //Keeps track of the tokens that have been assigned to others
     
-    uint id = 1; //Keeps track of the id of the animal info mapping; first id is 1 
+    uint id = 0; //Keeps track of the id of the animal info mapping
 
     mapping(address => uint) public tokens; //Stores the token balance of different addresses
     mapping(uint  => Animal_Info) public animals; //Stores the information of all animals
