@@ -29,8 +29,8 @@ contract adoptAnimal {
     uint public max_tokens; //The maximum tokens available, will be specified in the constructor of the deployment of the contract
     uint public tokens_assigned; //Keeps track of the tokens that have been assigned to others
     
-    uint id = 0; //Keeps track of the id of the animal info mapping
-    
+    uint id = 1; //Keeps track of the id of the animal info mapping; first id is 1 
+
     mapping(address => uint) public tokens; //Stores the token balance of different addresses
     mapping(uint  => Animal_Info) public animals; //Stores the information of all animals
     mapping(uint => Adoption_Info) public adoptions; //Stores the information of all adoptions
@@ -102,14 +102,14 @@ contract adoptAnimal {
         else if(age_year>9){
             _token_requirement -= 1;
         }
-        //check the level of speical care required for animal, only Medium/High required more tokens
+        //check the level of special care required for animal, only Medium/High required more tokens
         if (keccak256(bytes(SpecialCare)) == keccak256(bytes("Medium"))){
             _token_requirement += 2;
         }
         else if (keccak256(bytes(SpecialCare)) == keccak256(bytes("High"))){
             _token_requirement += 3;
         }
-        //return total token needed for speific animal
+        //return total token needed for specific animal
         return _token_requirement;
     }
     
@@ -156,7 +156,7 @@ contract adoptAnimal {
 	//Start the adoption of an animal
 	//This function should be called by the admin and should specify the animal id that is open for adoption, as well as the time available for this adoption. The adoption will end after the time has passed
 	function open_adoption(uint animalID, uint openTime) public onlyAdmin{
-        require(animals[animalID].isAvailable, 'The animal id does not exist or the animal is not open for adoption.'); //The animal id specfied must be available for adoption
+        require(animals[animalID].isAvailable, 'The animal id does not exist or the animal is not open for adoption.'); //The animal id specified must be available for adoption
         require(!adoptions[animalID].isInitialized, 'The animal id has already been open for adoption once.'); //It should be the first time for the animal to be open for adoption
         adoptions[animalID].endTime = block.timestamp + openTime; //Calculate the end time of the adoption by adding the time for adoption and the current timestamp when this function is called
         adoptions[animalID].isInitialized = true;
@@ -205,7 +205,7 @@ contract adoptAnimal {
 	}
 	
 	
-	//Allows the public to view the candiates and their tokens balances of a particular adoption
+	//Allows the public to view the candidates and their tokens balances of a particular adoption
 	function get_adoption_candidates(uint animalID) public view returns (address[] memory, uint[] memory){
 	    require(adoptions[animalID].isInitialized, 'The animal id does not exist or the animal is not open for adoption.');
 	    require(block.timestamp < adoptions[animalID].endTime, 'The adoption for this animal id is ended.');
