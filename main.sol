@@ -7,7 +7,7 @@ contract adoptAnimal {
         string Name; //Name of animal
         string Species; //Species of animal, 
         string Breed; //Breed of animal
-        string SpecialCare; //Animal state of speical care, None/Low/Medium/High
+        string SpecialCare; //Animal state of special care, None/Low/Medium/High
         uint weight; //Weight of animal, all values store were multiply by 10 to avoid floating numbers
         uint age_year ; //Age of animal
         uint age_month; //Age of animal
@@ -15,7 +15,7 @@ contract adoptAnimal {
         bool isAvailable; //Animal state of adoption
     }
     
-    //Attributes stoed in each adoption
+    //Attributes stored in each adoption
     struct Adoption_Info {
         uint endTime; //The end time of the adoption of an animal
         bool isInitialized; //The status of the adoption
@@ -79,7 +79,7 @@ contract adoptAnimal {
                         returns (uint    MinimumTokenRequired){
         uint _token_requirement = 0;
         //check the species of animal and assign basic token needed for adoption
-        //for simplicity, we assume only Dog and Cat are avilable for adoption
+        //for simplicity, we assume only Dog and Cat are available for adoption
         if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
             _token_requirement += 9;
             if (weight < 12000){
