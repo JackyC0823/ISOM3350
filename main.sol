@@ -23,37 +23,17 @@ contract adoptAnimal {
         address winner;
     }
     
-    struct Adopter_Info {
-        string Name;
-    	uint Age;
-        string Housing_type;
-    	bool Cat_net;
-    	bool Is_volunteer;
-    	bool Have_maid;
-    	bool Taken_course;
-    	bool Walk_dog_daily;
-    	uint Pet_daily_alonehr;
-    	uint Living_spacepa;
-    	uint Household_income;
-    	bool willDesex;
-    	uint Meeting_rating;
-    	bool isValid;
-        
-    }
-
-    
     address admin;
     
     uint public max_tokens;
     uint public tokens_assigned;
     
-    uint id = 1 ;
+    uint id = 0;
     uint public recordCount = 0;
     
     mapping(address => uint) public tokens;
     mapping(uint  => Animal_Info) public animals;
     mapping(uint => Adoption_Info) public adoptions;
-    mapping(address => Adopter_Info) public adopter;
     
     
     modifier onlyAdmin(){
@@ -77,42 +57,9 @@ contract adoptAnimal {
 	    tokens_assigned -= tokens[adopter];
         tokens[adopter] = 0;
 	}
-	
-	/////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////
-		/////// Add by Ally, cannot fix T.T ///////
-	
-	//This function checks the availability adopter
-  
-    function ApproveAdopter(address _adopter)
-                        public onlyAdmin{
-        adopter[_adopter].isValid = true;
-    }
-    //submit adopter info -> staff validate 
-    //This function calculate the token assigned to an adopter
-    function ApplyAdopter(
-            uint Age,
-			bool Cat_net,            
-			string Housing_type,
-			bool Is_volunteer,
-			bool Taken_course,			
-			bool Have_maid,
-			bool Walk_dog_daily,
-			uint Pet_daily_alonehr,
-			bool willDesex,
-			uint Living_spacepa,
-			uint Household_income,	
-			uint Meeting_rating
-			
-                        )public 
-                        returns (bool success){
-            
-            
-    }
-	
+
 	//This function checks the adoption availability of each animal
-    function isAvailable(uint _id) 
+    function isAvailable (uint _id) 
                         view public
                         returns (bool Availability){
         return animals[_id].isAvailable;                         
@@ -165,27 +112,27 @@ contract adoptAnimal {
     
     //This function inserts new animal record into our database
     function addAnimal(
-                        string memory Name, 
-                        string memory Species,
-                        string memory Breed,
-                        string memory SpecialCare,
-                        uint  age_year,
-                        uint age_month,
-                        uint weight
+                        string memory _Name, 
+                        string memory _Species,
+                        string memory _Breed,
+                        string memory _SpecialCare,
+                        uint  _age_year,
+                        uint _age_month,
+                        uint _weight
                         ) 
                         
                         public onlyAdmin 
                         returns(bool success) {
         if(isAvailable(id)) revert();
         animals[id] = Animal_Info({
-            Name : Name,
-            Species : Species,
-            Breed : Breed,
-            SpecialCare : SpecialCare,
-            age_year : age_year,
-            age_month : age_month,
-            weight : weight,
-            token_requirement : CalcTokenRequired(Species,SpecialCare,age_year,age_month,weight),
+            Name : _Name,
+            Species : _Species,
+            Breed : _Breed,
+            SpecialCare : _SpecialCare,
+            age_year : _age_year,
+            age_month : _age_month,
+            weight : _weight,
+            token_requirement : CalcTokenRequired(_Species, _SpecialCare, _age_year, _age_month, _weight),
             isAvailable : true
         });
         
@@ -203,97 +150,7 @@ contract adoptAnimal {
         return true;
        
     }
-    
-    function assignToken(address _adopter)
-                        internal pure{
-                uint _tokens = 0;
-       
-        require(Age>=18, 'Adopter must be above or equal to 18.');                  // Ensure adopter is above 18
-        if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){                  // Ensure adopter install a cat net, if adopter wants to adopt a cat
-                require(bool Cat_net = True, 'Adopter must install a cat net.');
-            }
-            else if (bool Cat_net = false){
-                tokens[adopter] += 1;
-            }
-        }
-	if (Housing_type = Public Housing){                                            // Assign tokens according to adopter's housing type
-		tokens[adopter] -= 100;  
-        }	
-	else if (Housing_type = Chinese Walk Up){
-		tokens[adopter] += 0;
-	}
-	else if (Housing_type = Private Housing){
-		tokens[adopter] += 1;
-	}
-	else if (Housing_type = Village House){
-		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-	else if (Housing_type = Villa){
-		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-	else if (Housing_type = Independent Block){
-		if (keccak256(bytes(Species)) == keccak256(bytes("Cat"))){
-			tokens[adopter] += 1;
-		}
-		if (keccak256(bytes(Species)) == keccak256(bytes("Dog"))){
-			tokens[adopter] += 2;
-		}
-	}
-        if (bool Is_volunteer = True){                                              // Assign tokens according to if the adopter is a volunteer
-		tokens[adopter] += 1;
-	}
 	
-        if (bool Taken_course = True){                                              // Assign tokens according to if the adopter has taken related course
-		tokens[adopter] += 2;
-	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has maid, if adopter wants to adopt a dog
-		if (bool Have_maid = True)
-		tokens[adopter] += 2;
-	}
-	if (keccak256(bytes(Species)) == keccak256(bytes("dog"))){                      // Assign tokens according to if the adopter has taken related course
-		if (bool Walk_dog_daily = True)
-		tokens[adopter] += 2;
-	}
-	if (Pet_daily_alonehr <6){                                                      // Assign tokens according to expected alone hour at home of the pet
-            tokens[adopter] += 2;
-	}
-	else if (Pet_daily_alonehr <9){
-            tokens[adopter] += 2;
-	}
-	if (bool willDesex = True){                                                     // Assign tokens according to if the adopter will let the pet receive Desex surgery
-            tokens[adopter] += 2;
-	}
-	if (Living_spacepa > 200){                                                      // Assign tokens according to adopter's living space per capita
-	    tokens[adopter] += 1;
-	}
-	else if (Living_spacepa > 300){
-	    tokens[adopter] += 2;
-	}
-	require(household_income > 10000, "Household income per capital must be above HKD10000" )
-	if (Household_income > 15000){
-	    token[adopter] += 1                                                         // Assign tokens according to adopter's household income per capita
-	}
-	else if (Household_income > 35000){
-	    token[adopter] += 2
-	}                        
-    token[adopter] = token[adopter] + Meeting_rating                                // Adjust the number of tokens according to the meeting rating, range is -5 to +5
-	
-    
-}
-	
-	/////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////
 	
 	function open_adoption(uint animalID, uint openTime) public onlyAdmin{
         require(animals[animalID].isAvailable, 'The animal id does not exist or the animal is not open for adoption.');
@@ -356,5 +213,5 @@ contract adoptAnimal {
         return (candidates, token);// an array of candidates as well as their token balance
         
 	}
-	
-
+}
+    
